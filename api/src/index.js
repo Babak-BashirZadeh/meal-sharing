@@ -19,7 +19,7 @@ const apiRouter = express.Router();
       : "SHOW TABLES;";
   const tables = await knex.raw(SHOW_TABLES_QUERY);
   res.json({ tables });
-}); */
+});*/
 
 app.get("/all-meals", async (req, res) => {
   const tables = await knex.raw("SELECT * FROM meal");
