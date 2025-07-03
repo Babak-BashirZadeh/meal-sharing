@@ -1,55 +1,94 @@
-import "dotenv/config";
 import express from "express";
+import { getMeals } from "./models.js";
+import mealsRouter from "./routers/meals.js";
+import reservationsRouter from "./routers/reservations.js";
+import reviewsRouter from "./routers/reviews.js";
 import cors from "cors";
-import bodyParser from "body-parser";
-import knex from "./database_client.js";
-import nestedRouter from "./routers/nested.js";
 
 const app = express();
-app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
-const apiRouter = express.Router();
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
 
-// You can delete this route once you add your own routes
-/* apiRouter.get("/", async (req, res) => {
-  const SHOW_TABLES_QUERY =
-    process.env.DB_CLIENT === "pg"
-      ? "SELECT * FROM pg_catalog.pg_tables;"
-      : "SHOW TABLES;";
-  const tables = await knex.raw(SHOW_TABLES_QUERY);
-  res.json({ tables });
-}); */
+app.use("/api/meals", mealsRouter);
+app.use("/api/reservations", reservationsRouter);
+app.use("/api/reviews", reviewsRouter);
+
+const PORT = process.env.PORT || 3001;
+
+const error404 = "There are no meals for your request.";
+
+// Function that checks whether the meals array is empty
+const mealError = (meals, res) => {
+  if (meals.length === 0) {
+    res.status(404).json({ error: error404 });
+  } else {
+    res.json(meals);
+  }
+};
+
+app.get("/", (req, res) => {
+  res.send("Welcome to Meal Sharing");
+});
 
 app.get("/all-meals", async (req, res) => {
-  const tables = await knex.raw("SELECT * FROM meal");
-  res.json({ tables });
+  try {
+    const meals = await getMeals("ORDER BY id");
+    mealError(meals, res);
+  } catch (error) {
+    console.error("Error fetching all meals:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 app.get("/future-meals", async (req, res) => {
-  const tables = await knex.raw("SELECT * FROM meal WHERE `when`> NOW()");
-  res.json({ tables });
-});
-
-app.get("/first-meal", async (req, res) => {
-  const tables = await knex.raw("SELECT * FROM meal ORDER BY ID LIMIT 1");
-  res.json({ tables });
+  try {
+    const meals = await getMeals("WHERE when_time > NOW()");
+    mealError(meals, res);
+  } catch (error) {
+    console.error("Error fetching future meals:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 app.get("/past-meals", async (req, res) => {
-  const tables = await knex.raw("SELECT * FROM meal WHERE `when`< NOW()");
-  res.json({ tables });
+  try {
+    const meals = await getMeals("WHERE when_time < NOW()");
+    mealError(meals, res);
+  } catch (error) {
+    console.error("Error fetching past meals:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.get("/first-meal", async (req, res) => {
+  try {
+    const meals = await getMeals("WHERE id = (SELECT MIN(id) FROM meal)");
+    mealError(meals, res);
+  } catch (error) {
+    console.error("Error fetching first meal:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+  const meals = await getMeals("WHERE id = (SELECT MIN(id) FROM meal)");
+  mealError(meals, res);
 });
 
 app.get("/last-meal", async (req, res) => {
-  const tables = await knex.raw("SELECT * FROM meal ORDER BY ID DESC LIMIT 1");
-  res.json({ tables });
+  try {
+    const meals = await getMeals("WHERE id = (SELECT MAX(id) FROM meal)");
+    mealError(meals, res);
+  } catch (error) {
+    console.error("Error fetching last meal:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
-// This nested router example can also be replaced with your own sub-router
-apiRouter.use("/nested", nestedRouter);
 
-app.use("/api", apiRouter);
-
-app.listen(process.env.PORT, () => {
-  console.log(`API listening on port ${process.env.PORT}`);
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });

@@ -1,0 +1,60 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.title {
+  font-size: 24px;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.mealCard {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 15px;
+  background-color: #fff;
+}
+
+.mealTitle {
+  font-size: 20px;
+  color: #2c3e50;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.mealDescription {
+  color: #666;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.mealPrice {
+  font-weight: bold;
+  color: #e74c3c;
+  margin-bottom: 0;
+}
+
+.loading {
+  text-align: center;
+  color: #3498db;
+  font-size: 18px;
+  padding: 20px;
+}
+
+.error {
+  text-align: center;
+  color: #e74c3c;
+  font-size: 18px;
+  padding: 20px;
+}
+
+.empty {
+  text-align: center;
+  color: #7f8c8d;
+  font-size: 18px;
+  padding: 20px;
+}
