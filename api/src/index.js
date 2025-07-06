@@ -16,6 +16,7 @@ app.use("./routers/reservations", reservationsRouter);
 app.use("./routers/reviews", reviewsRouter);
 const apiRouter = express.Router();
 
+
 app.get("/all-meals", async (req, res) => {
   try {
     const meals = await getMeals("ORDER BY id");
