@@ -67,6 +67,7 @@ const MealsList = () => {
         </Grid>
       </Box>
     </Container>
+
   );
 };
 

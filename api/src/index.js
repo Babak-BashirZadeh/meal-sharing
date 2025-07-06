@@ -5,6 +5,7 @@ import reservationsRouter from "./routers/reservations.js";
 import reviewsRouter from "./routers/reviews.js";
 import cors from "cors";
 
+
 const app = express();
 app.use(express.json());
 
@@ -36,6 +37,47 @@ const mealError = (meals, res) => {
 app.get("/", (req, res) => {
   res.send("Welcome to Meal Sharing");
 });
+
+import reviewsRouter from "./routers/reviews.js"
+
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
+app.use("./routers/meals", mealsRouter);
+app.use("./routers/reservations", reservationsRouter);
+
+app.use("./routers/reviews", reviewsRouter);
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
+
+
+app.use("/api/meals", mealsRouter);
+app.use("/api/reservations", reservationsRouter);
+app.use("/api/reviews", reviewsRouter);
+
+const PORT = process.env.PORT || 3001;
+
+const error404 = "There are no meals for your request.";
+
+// Function that checks whether the meals array is empty
+const mealError = (meals, res) => {
+  if (meals.length === 0) {
+    res.status(404).json({ error: error404 });
+  } else {
+    res.json(meals);
+  }
+};
+
+app.get("/", (req, res) => {
+  res.send("Welcome to Meal Sharing");
+});
+
 
 app.get("/all-meals", async (req, res) => {
   try {
