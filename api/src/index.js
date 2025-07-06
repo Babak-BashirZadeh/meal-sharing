@@ -1,11 +1,41 @@
-import "dotenv/config";
 import express from "express";
-import cors from "cors";
-import bodyParser from "body-parser";
-import knex from "./database_client.js";
-import nestedRouter from "./routers/nested.js";
+import { getMeals } from "./models.js";
 import mealsRouter from "./routers/meals.js";
 import reservationsRouter from "./routers/reservations.js";
+import reviewsRouter from "./routers/reviews.js";
+import cors from "cors";
+
+const app = express();
+app.use(express.json());
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
+
+app.use("/api/meals", mealsRouter);
+app.use("/api/reservations", reservationsRouter);
+app.use("/api/reviews", reviewsRouter);
+
+const PORT = process.env.PORT || 3001;
+
+const error404 = "There are no meals for your request.";
+
+// Function that checks whether the meals array is empty
+const mealError = (meals, res) => {
+  if (meals.length === 0) {
+    res.status(404).json({ error: error404 });
+  } else {
+    res.json(meals);
+  }
+};
+
+app.get("/", (req, res) => {
+  res.send("Welcome to Meal Sharing");
+});
 
 import reviewsRouter from "./routers/reviews.js"
 
@@ -40,6 +70,16 @@ app.get("/future-meals", async (req, res) => {
   }
 });
 
+app.get("/past-meals", async (req, res) => {
+  try {
+    const meals = await getMeals("WHERE when_time < NOW()");
+    mealError(meals, res);
+  } catch (error) {
+    console.error("Error fetching past meals:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 app.get("/first-meal", async (req, res) => {
   try {
     const meals = await getMeals("WHERE id = (SELECT MIN(id) FROM meal)");
@@ -52,16 +92,6 @@ app.get("/first-meal", async (req, res) => {
   mealError(meals, res);
 });
 
-app.get("/past-meals", async (req, res) => {
-  try {
-    const meals = await getMeals("WHERE when_time < NOW()");
-    mealError(meals, res);
-  } catch (error) {
-    console.error("Error fetching past meals:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
 app.get("/last-meal", async (req, res) => {
   try {
     const meals = await getMeals("WHERE id = (SELECT MAX(id) FROM meal)");
@@ -72,8 +102,6 @@ app.get("/last-meal", async (req, res) => {
   }
 });
 
-app.use("/api", apiRouter);
-
-app.listen(process.env.PORT, () => {
-  console.log(`API listening on port ${process.env.PORT}`);
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
