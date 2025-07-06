@@ -5,6 +5,7 @@ import reservationsRouter from "./routers/reservations.js";
 import reviewsRouter from "./routers/reviews.js";
 import cors from "cors";
 
+
 const app = express();
 app.use(express.json());
 
@@ -37,6 +38,22 @@ app.get("/", (req, res) => {
   res.send("Welcome to Meal Sharing");
 });
 
+import bodyParser from "body-parser";
+import knex from "./database_client.js";
+import nestedRouter from "./routers/nested.js";
+import mealsRouter from "./routers/meals.js";
+import reservationsRouter from "./routers/reservations.js";
+import reviewsRouter from "./routers/reviews.js";
+
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
+app.use("./routers/meals", mealsRouter);
+app.use("./routers/reservations", reservationsRouter);
+app.use("./routers/reviews", reviewsRouter);
+const apiRouter = express.Router();
+
+
 app.get("/all-meals", async (req, res) => {
   try {
     const meals = await getMeals("ORDER BY id");
@@ -56,6 +73,7 @@ app.get("/future-meals", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
 
 app.get("/past-meals", async (req, res) => {
   try {
@@ -77,6 +95,28 @@ app.get("/first-meal", async (req, res) => {
   }
   const meals = await getMeals("WHERE id = (SELECT MIN(id) FROM meal)");
   mealError(meals, res);
+=======
+app.get("/first-meal", async (req, res) => {
+  try {
+    const meals = await getMeals("WHERE id = (SELECT MIN(id) FROM meal)");
+    mealError(meals, res);
+  } catch (error) {
+    console.error("Error fetching first meal:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+  const meals = await getMeals("WHERE id = (SELECT MIN(id) FROM meal)");
+  mealError(meals, res);
+});
+
+app.get("/past-meals", async (req, res) => {
+  try {
+    const meals = await getMeals("WHERE when_time < NOW()");
+    mealError(meals, res);
+  } catch (error) {
+    console.error("Error fetching past meals:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+
 });
 
 app.get("/last-meal", async (req, res) => {
@@ -88,6 +128,10 @@ app.get("/last-meal", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+
+app.use("/api", apiRouter);
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
