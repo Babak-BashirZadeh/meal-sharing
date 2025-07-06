@@ -1,11 +1,9 @@
 import express from "express";
 
 import db from "../db.js";
-import { StatusCodes } from "http-status-codes";
 
 const router = express.Router();
 
-// /api/reviews	GET	Returns all reviews.
 router.get("/", async (req, res) => {
   try {
     const reviews = await db.select().from("review");
@@ -17,7 +15,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-
+ 
 router.get("/meal/:meal_id/reviews", async (req, res) => {
   try {
     const mealId = Number(req.params.meal_id);
@@ -73,25 +71,23 @@ router.post("/", async (req, res) => {
   }
 });
 
-// /api/reviews/:id	GET	Returns a review by id.
 
 router.get("/:id", async (req, res) => {
-  const reviewId = Number(req.params.id);
-
-  if (isNaN(reviewId)) {
-    return res.status(StatusCodes.BAD_REQUEST).json({ error: "Invalid ID" });
-  }
-
   try {
-    const review = await db("review").where({ id: reviewId }).first();
-
-    if (!review) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ error: "Review not found" });
+    const id = Number(req.params.id);
+    if (isNaN(id)) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ error: "Invalid ID" });
     }
 
-    res.status(StatusCodes.OK).json(review);
+    const review = await db("review").where({ id });
+
+    if (review.length === 0) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        error: "Review not found",
+      });
+    }
+
+    res.status(StatusCodes.OK).json(review[0]);
   } catch (error) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       error: "Internal server error, failed to fetch review",
@@ -99,41 +95,20 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-
-// /api/reviews/:id	PUT	Updates the review by id.
-
 router.put("/:id", async (req, res) => {
-  const reviewId = Number(req.params.id);
-  const { rating, comment } = req.body;
-
-  if (isNaN(reviewId)) {
-    return res.status(StatusCodes.BAD_REQUEST).json({ error: "Invalid ID" });
-  }
-
-  if (!rating && !comment) {
-    return res.status(StatusCodes.BAD_REQUEST).json({
-      error:
-        "At least one field (rating or comment) must be provided for update",
-    });
-  }
-
   try {
-    const updatedReview = {};
-    if (rating) updatedReview.rating = rating;
-    if (comment) updatedReview.comment = comment;
+    const updatedCount = await db("review")
+      .where({ id: req.params.id })
+      .update(req.body);
 
-    const result = await db("review")
-      .where({ id: reviewId })
-      .update(updatedReview);
-
-    if (result === 0) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ error: "Review not found" });
+    if (!updatedCount) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        error: "review not found",
+      });
     }
-
-    res.status(StatusCodes.OK).json({ message: "Review updated successfully" });
+    res.status(StatusCodes.OK).json({ message: "review updated successfully" });
   } catch (error) {
+    console.error("Update review error:", error);
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       error: "Internal server error, failed to update review",
     });
@@ -141,26 +116,18 @@ router.put("/:id", async (req, res) => {
 });
 
 
-///api/reviews/:id	DELETE	Deletes the review by id.
-
 router.delete("/:id", async (req, res) => {
-  const reviewId = Number(req.params.id);
-
-  if (isNaN(reviewId)) {
-    return res.status(StatusCodes.BAD_REQUEST).json({ error: "Invalid ID" });
-  }
-
   try {
-    const result = await db("review").where({ id: reviewId }).del();
+    const deletedCount = await db("review").where({ id: req.params.id }).del();
 
-    if (result === 0) {
-      return res
-        .status(StatusCodes.NOT_FOUND)
-        .json({ error: "Review not found" });
+    if (!deletedCount) {
+      return res.status(StatusCodes.NOT_FOUND).json({
+        error: "Review not found",
+      });
     }
-
-    res.status(StatusCodes.NO_CONTENT).send();
+    res.status(StatusCodes.OK).json({ message: "Review deleted successfully" });
   } catch (error) {
+    console.error("Delete review error:", error.stack || error);
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       error: "Internal server error, failed to delete review",
     });
