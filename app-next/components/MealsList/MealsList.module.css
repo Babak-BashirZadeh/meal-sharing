@@ -1,0 +1,164 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-xl) 2rem;
+  background-color: var(--color-background-light);
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: 3.5rem;
+  color: var(--color-text-dark);
+  margin-bottom: 3.5rem;
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: -0.05rem;
+  animation: fadeInDown 0.8s ease-out forwards;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mealsList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 3rem;
+  padding-top: 1rem;
+  animation: fadeInGrid 1s ease-out forwards;
+  animation-delay: 0.2s;
+  opacity: 0;
+}
+
+@keyframes fadeInGrid {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.loading,
+.error,
+.empty {
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 1.5rem;
+  padding: var(--spacing-xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.loading {
+  color: var(--color-primary-accent);
+  gap: 1.5rem;
+}
+
+.loading::before {
+  content: "";
+  width: 55px;
+  height: 55px;
+  border: 6px solid rgba(146, 176, 123, 0.2);
+  border-top-color: var(--color-primary-accent);
+  border-radius: 50%;
+  animation: spin 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.error {
+  color: var(--color-secondary-contrast);
+}
+
+.empty {
+  color: var(--color-text-light);
+}
+
+@media (max-width: 1200px) {
+  .container {
+    padding: var(--spacing-lg) 2rem;
+  }
+  .title {
+    font-size: 3rem;
+  }
+  .mealsList {
+    gap: 2.5rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .mealsList {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+  }
+  .title {
+    font-size: 2.5rem;
+    margin-bottom: 2.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-lg) 1.5rem;
+  }
+  .title {
+    font-size: 2.2rem;
+    margin-bottom: 2rem;
+  }
+  .mealsList {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  .loading,
+  .error,
+  .empty {
+    font-size: 1.2rem;
+    padding: var(--spacing-lg);
+  }
+  .loading::before {
+    width: 45px;
+    height: 45px;
+    border-width: 5px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: var(--spacing-unit) 1rem;
+  }
+  .title {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+  .loading,
+  .error,
+  .empty {
+    font-size: 1rem;
+    padding: var(--spacing-lg);
+  }
+  .loading::before {
+    width: 40px;
+    height: 40px;
+    border-width: 4px;
+  }
+}
