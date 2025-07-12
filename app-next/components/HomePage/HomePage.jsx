@@ -6,6 +6,7 @@ import Meal from "../Meal/Meal.jsx";
 import api from "../../utils/api";
 import Link from "next/link";
 
+
 function HomePage() {
   const [meals, setMeals] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -58,6 +59,7 @@ function HomePage() {
         )}
       </section>
     </div>
+
   );
 }
 

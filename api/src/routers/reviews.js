@@ -4,7 +4,9 @@ import db from "../db.js";
 
 const router = express.Router();
 
-// GET /api/reviews - Returns all reviews
+
+// /api/reviews - GET	Returns all reviews
+
 router.get("/", async (req, res) => {
   try {
     const reviews = await db.select().from("review");
@@ -20,11 +22,13 @@ router.get("/", async (req, res) => {
 router.get("/:mealId", async (req, res) => {
   try {
     const mealId = Number(req.params.mealId);
+
     if (isNaN(mealId)) {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: "Invalid meal ID" });
     }
+
     const reviews = await db("review").where({ meal_id: mealId });
     res.status(StatusCodes.OK).json(reviews);
   } catch (error) {
@@ -84,6 +88,7 @@ router.post("/", async (req, res) => {
 });
 
 // PUT /api/reviews/:id - Update a review by id
+
 router.put("/:id", async (req, res) => {
   try {
     const updatedCount = await db("review")
@@ -97,6 +102,7 @@ router.put("/:id", async (req, res) => {
     }
 
     res.status(StatusCodes.OK).json({ message: "Review updated successfully" });
+
   } catch (error) {
     console.error("Update review error:", error);
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -106,6 +112,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // DELETE /api/reviews/:id - Delete a review by id
+
 router.delete("/:id", async (req, res) => {
   try {
     const deletedCount = await db("review").where({ id: req.params.id }).del();
@@ -119,6 +126,7 @@ router.delete("/:id", async (req, res) => {
     res.status(StatusCodes.OK).json({ message: "Review deleted successfully" });
   } catch (error) {
     console.error("Delete review error:", error);
+
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       error: "Internal server error, failed to delete review",
     });

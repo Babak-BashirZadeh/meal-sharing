@@ -5,8 +5,10 @@ import reservationsRouter from "./routers/reservations.js";
 import reviewsRouter from "./routers/reviews.js";
 import cors from "cors";
 
+
 const app = express();
 app.use(express.json());
+
 
 app.use(
   cors({
@@ -36,6 +38,7 @@ const mealError = (meals, res) => {
 app.get("/", (req, res) => {
   res.send("Welcome to Meal Sharing");
 });
+
 
 app.get("/all-meals", async (req, res) => {
   try {

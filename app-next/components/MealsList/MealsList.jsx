@@ -7,6 +7,7 @@ import api from "../../utils/api";
 import { useSearchParams } from "next/navigation";
 import SortControls from "../SortControls/SortControls";
 
+
 const MealsList = () => {
   const [meals, setMeals] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -35,6 +36,7 @@ const MealsList = () => {
         }
 
         const response = await fetch(url, {
+
           headers: {
             "Content-Type": "application/json",
           },
@@ -58,6 +60,7 @@ const MealsList = () => {
     fetchMeals();
   }, [searchQuery, sortKey, sortDir]);
 
+
   if (isLoading) {
     return <p className={styles.loading}>Loading meals...</p>;
   }
@@ -72,6 +75,7 @@ const MealsList = () => {
         No meals found{searchQuery ? ` for "${searchQuery}"` : ""}.
       </p>
     );
+
   }
 
   return (
@@ -82,7 +86,7 @@ const MealsList = () => {
           : "All Available Meals"}
       </h2>
 
-      {/* 👇 Sort Controls */}
+      {/* Sort Controls */}
       <SortControls
         sortKey={sortKey}
         setSortKey={setSortKey}
@@ -95,8 +99,10 @@ const MealsList = () => {
           <Meal key={meal.id} meal={meal} />
         ))}
       </div>
+
     </div>
   );
 };
 
 export default MealsList;
+
