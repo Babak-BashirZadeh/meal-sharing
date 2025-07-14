@@ -108,16 +108,19 @@ router.delete("/:id", async (req, res) => {
 
   
 
+
     // maxPrice	- Returns all meals that are cheaper than maxPrice
     if (req.query.maxPrice) {
       const maxPrice = Number(req.query.maxPrice);
       if (isNaN(maxPrice)) {
+
         return res.status(StatusCodes.BAD_REQUEST).json({
           error: "Invalid maxPrice",
         });
       }
       query = query.where("price", "<=", maxPrice);
     }
+
 
     // availableReservations - Returns all meals that still have available spots left, if true. If false, return meals that have no available spots left
     if (req.query.availableReservations !== undefined) {

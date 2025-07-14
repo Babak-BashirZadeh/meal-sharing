@@ -1,6 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { Container, Box, Grid, Typography } from "@mui/material";
+import MealCard from "./Meal";
+import api from "../../utils/api"; // Adjust the import path as necessary
+const serverUrl = "http://localhost:3001"; // Replace with your actual server URL if different
+
+
 import styles from "./MealsList.module.css";
 import Meal from "../Meal/Meal";
 import api from "../../utils/api";
@@ -10,7 +16,6 @@ import SortControls from "../SortControls/SortControls";
 
 const MealsList = () => {
   const [meals, setMeals] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const [sortKey, setSortKey] = useState("");
@@ -18,6 +23,7 @@ const MealsList = () => {
 
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get("search") || "";
+
 
   useEffect(() => {
     const fetchMeals = async () => {
@@ -42,19 +48,21 @@ const MealsList = () => {
           },
         });
 
-        if (!response.ok) {
-          throw new Error(`Server responded with ${response.status}`);
-        }
 
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
         const data = await response.json();
+
         setMeals(data);
+        setError(null);
       } catch (error) {
         setError(
           "Error loading meals: server unavailable. Please try again later."
         );
         console.error("Error fetching meals:", error);
+
       }
-      setIsLoading(false);
     };
 
     fetchMeals();
@@ -101,6 +109,7 @@ const MealsList = () => {
       </div>
 
     </div>
+
   );
 };
 

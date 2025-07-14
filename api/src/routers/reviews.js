@@ -1,11 +1,9 @@
 import express from "express";
-import { StatusCodes } from "http-status-codes/build/cjs/index.js";
+
 import db from "../db.js";
 
 const router = express.Router();
 
-
-// /api/reviews - GET	Returns all reviews
 
 router.get("/", async (req, res) => {
   try {
@@ -20,6 +18,7 @@ router.get("/", async (req, res) => {
 
 // GET /api/reviews/:mealId - Returns all reviews for a specific meal
 router.get("/:mealId", async (req, res) => {
+
   try {
     const mealId = Number(req.params.mealId);
 
@@ -39,8 +38,39 @@ router.get("/:mealId", async (req, res) => {
   }
 });
 
-// POST /api/reviews - Add a new review
+
+
+// /api/reviews	POST	Adds a new review to the database.
+
 router.post("/", async (req, res) => {
+  const { meal_id, rating, comment } = req.body;
+
+  if (!meal_id || !rating || !comment) {
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      error: "Missing required fields: meal_id, rating, and comment",
+    });
+  }
+
+  try {
+    const newReview = {
+      meal_id,
+      rating,
+      comment,
+      created_at: new Date(),
+    };
+
+    const [id] = await db("review").insert(newReview).returning("id");
+
+    res.status(StatusCodes.CREATED).json({ id, ...newReview });
+  } catch (error) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      error: "Internal server error, failed to add review",
+    });
+  }
+});
+
+
+router.get("/:id", async (req, res) => {
   try {
     const { title, description, meal_id, stars } = req.body;
 
@@ -87,7 +117,6 @@ router.post("/", async (req, res) => {
   }
 });
 
-// PUT /api/reviews/:id - Update a review by id
 
 router.put("/:id", async (req, res) => {
   try {
@@ -111,7 +140,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// DELETE /api/reviews/:id - Delete a review by id
+
 
 router.delete("/:id", async (req, res) => {
   try {
