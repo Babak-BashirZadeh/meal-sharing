@@ -5,6 +5,10 @@ import { Container, Box, Grid, Typography } from "@mui/material";
 import MealCard from "./Meal";
 import api from "../../utils/api"; // Adjust the import path as necessary
 const serverUrl = "http://localhost:3001"; // Replace with your actual server URL if different
+
+
+import styles from "./MealsList.module.css";
+
 const MealsList = () => {
   const [meals, setMeals] = useState([]);
   const [error, setError] = useState(null);
