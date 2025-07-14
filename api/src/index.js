@@ -5,6 +5,7 @@ import reservationsRouter from "./routers/reservations.js";
 import reviewsRouter from "./routers/reviews.js";
 import cors from "cors";
 
+
 import bodyParser from "body-parser";
 import knex from "./database_client.js";
 import nestedRouter from "./routers/nested.js";
@@ -43,8 +44,10 @@ app.get("/", (req, res) => {
 
 
 
+
 const app = express();
 app.use(express.json());
+
 
 app.use(
   cors({
@@ -74,6 +77,7 @@ const mealError = (meals, res) => {
 app.get("/", (req, res) => {
   res.send("Welcome to Meal Sharing");
 });
+
 
 import reviewsRouter from "./routers/reviews.js"
 

@@ -8,16 +8,47 @@ const serverUrl = "http://localhost:3001"; // Replace with your actual server UR
 
 
 import styles from "./MealsList.module.css";
+import Meal from "../Meal/Meal";
+import api from "../../utils/api";
+import { useSearchParams } from "next/navigation";
+import SortControls from "../SortControls/SortControls";
+
 
 const MealsList = () => {
   const [meals, setMeals] = useState([]);
   const [error, setError] = useState(null);
 
-  // Fetch meals from the API when the component mounts
+  const [sortKey, setSortKey] = useState("");
+  const [sortDir, setSortDir] = useState("asc");
+
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get("search") || "";
+
+
   useEffect(() => {
     const fetchMeals = async () => {
+      setIsLoading(true);
+      setError(null);
+
       try {
-        const response = await fetch(serverUrl +"/api/meals"); // Replace with your actual API endpoint if different
+        const url = new URL(api("/meals"), window.location.origin);
+
+        if (searchQuery) {
+          url.searchParams.append("title", searchQuery);
+        }
+        if (sortKey) {
+          url.searchParams.append("sortKey", sortKey);
+          url.searchParams.append("sortDir", sortDir);
+        }
+
+        const response = await fetch(url, {
+
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -26,53 +57,61 @@ const MealsList = () => {
         setMeals(data);
         setError(null);
       } catch (error) {
-        console.error("Failed to fetch meals:", error);
-        setError("Failed to load meals. Please try again later.");
+        setError(
+          "Error loading meals: server unavailable. Please try again later."
+        );
+        console.error("Error fetching meals:", error);
+
       }
     };
 
     fetchMeals();
-  }, []);
+  }, [searchQuery, sortKey, sortDir]);
+
+
+  if (isLoading) {
+    return <p className={styles.loading}>Loading meals...</p>;
+  }
+
+  if (error) {
+    return <p className={styles.error}>{error}</p>;
+  }
+
+  if (meals.length === 0) {
+    return (
+      <p className={styles.empty}>
+        No meals found{searchQuery ? ` for "${searchQuery}"` : ""}.
+      </p>
+    );
+
+  }
 
   return (
-    <Container maxWidth="lg">
-      <Box
-        sx={{
-          margin: "0 auto",
-          padding: "2rem",
-        }}
-      >
-        <Typography
-          variant="h4"
-          sx={{
-            textAlign: "center",
-            marginBottom: "2rem",
-            fontSize: "2rem",
-            color: "#333",
-          }}
-        >
-          Meals
-        </Typography>
-        {error && (
-          <Typography
-            variant="body1"
-            color="error"
-            sx={{ textAlign: "center", marginBottom: "1rem" }}
-          >
-            {error}
-          </Typography>
-        )}
-        <Grid container spacing={4} justifyContent="center">
-          {meals.map((meal) => (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={meal.id}>
-              <MealCard meal={meal} />
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
-    </Container>
+    <div className={styles.container}>
+      <h2 className={styles.title}>
+        {searchQuery
+          ? `Search Results for "${searchQuery}"`
+          : "All Available Meals"}
+      </h2>
+
+      {/* Sort Controls */}
+      <SortControls
+        sortKey={sortKey}
+        setSortKey={setSortKey}
+        sortDir={sortDir}
+        setSortDir={setSortDir}
+      />
+
+      <div className={styles.mealsList}>
+        {meals.map((meal) => (
+          <Meal key={meal.id} meal={meal} />
+        ))}
+      </div>
+
+    </div>
 
   );
 };
 
 export default MealsList;
+

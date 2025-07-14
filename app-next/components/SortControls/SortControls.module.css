@@ -1,0 +1,23 @@
+.sortControls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 2rem;
+  justify-content: flex-end;
+}
+
+.sortControls label {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--color-text-dark);
+}
+
+.sortControls select {
+  margin-left: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.4rem;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  background-color: #fff;
+  color: var(--color-text-dark);
+}
