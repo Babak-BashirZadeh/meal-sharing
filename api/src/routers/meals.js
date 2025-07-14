@@ -98,7 +98,6 @@ import db from "../db.js";
 
 const router = express.Router();
 
-// /api/meals - GET	Returns all meals
 router.get("/", async (req, res) => {
   try {
     let query = db("meal").select("meal.*");
@@ -107,12 +106,14 @@ router.get("/", async (req, res) => {
     if (req.query.maxPrice) {
       const maxPrice = Number(req.query.maxPrice);
       if (isNaN(maxPrice)) {
+
         return res.status(StatusCodes.BAD_REQUEST).json({
           error: "Invalid maxPrice",
         });
       }
       query = query.where("price", "<=", maxPrice);
     }
+
 
     // availableReservations - Returns all meals that still have available spots left, if true. If false, return meals that have no available spots left
     if (req.query.availableReservations !== undefined) {

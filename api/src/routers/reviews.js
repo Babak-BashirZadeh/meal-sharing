@@ -1,10 +1,9 @@
 import express from "express";
-import { StatusCodes } from "http-status-codes/build/cjs/index.js";
+
 import db from "../db.js";
 
 const router = express.Router();
 
-// /api/reviews - GET	Returns all reviews
 router.get("/", async (req, res) => {
   try {
     const reviews = await db.select().from("review");
@@ -16,7 +15,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// /api/meals/:meal_id/reviews	GET	Returns all reviews for a specific meal
+ 
 router.get("/meal/:meal_id/reviews", async (req, res) => {
   try {
     const mealId = Number(req.params.meal_id);
@@ -42,7 +41,37 @@ router.get("/meal/:meal_id/reviews", async (req, res) => {
   }
 });
 
-// /api/reviews/:id- GET Returns the review by id
+
+// /api/reviews	POST	Adds a new review to the database.
+
+router.post("/", async (req, res) => {
+  const { meal_id, rating, comment } = req.body;
+
+  if (!meal_id || !rating || !comment) {
+    return res.status(StatusCodes.BAD_REQUEST).json({
+      error: "Missing required fields: meal_id, rating, and comment",
+    });
+  }
+
+  try {
+    const newReview = {
+      meal_id,
+      rating,
+      comment,
+      created_at: new Date(),
+    };
+
+    const [id] = await db("review").insert(newReview).returning("id");
+
+    res.status(StatusCodes.CREATED).json({ id, ...newReview });
+  } catch (error) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      error: "Internal server error, failed to add review",
+    });
+  }
+});
+
+
 router.get("/:id", async (req, res) => {
   try {
     const id = Number(req.params.id);
@@ -66,7 +95,6 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// /api/reviews/:id	PUT	Updates the review by id
 router.put("/:id", async (req, res) => {
   try {
     const updatedCount = await db("review")
@@ -87,7 +115,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// /api/reviews/:id- DELETE Deletes the review by id
+
 router.delete("/:id", async (req, res) => {
   try {
     const deletedCount = await db("review").where({ id: req.params.id }).del();
