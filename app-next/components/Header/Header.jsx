@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation"; // <-- update this import!
+import { useRouter } from "next/navigation";
 import styles from "./Header.module.css";
 import Logo from "../../assets/mealsharing.jpeg";
 
