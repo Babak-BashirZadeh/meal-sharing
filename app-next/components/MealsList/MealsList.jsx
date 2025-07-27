@@ -24,16 +24,15 @@ const MealsList = () => {
       setError(null);
 
       try {
-        let url = api("/meals");
-        const params = new URLSearchParams();
+        const url = new URL(api("/meals"), window.location.origin);
 
-        if (searchQuery) params.append("title", searchQuery);
-        if (sortKey) {
-          params.append("sortKey", sortKey);
-          params.append("sortDir", sortDir);
+        if (searchQuery) {
+          url.searchParams.append("title", searchQuery);
         }
-
-        if (params.toString()) url += "?" + params.toString();
+        if (sortKey) {
+          url.searchParams.append("sortKey", sortKey);
+          url.searchParams.append("sortDir", sortDir);
+        }
 
         const response = await fetch(url, {
           headers: {

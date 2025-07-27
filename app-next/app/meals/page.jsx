@@ -1,7 +1,7 @@
 "use client";
 export const dynamic = 'force-dynamic';
 import { Suspense } from 'react';
-import MealsList from "../../components/MealsList/MealsList";
+//import MealsList from "../../components/MealsList/MealsList";
 
 // Dynamically import MealsList with ssr: false
 // This tells Next.js NOT to render this component on the server during build/prerendering.
@@ -14,7 +14,7 @@ const DynamicMealsList = dynamic(() => import('../../components/MealsList/MealsL
 export default function MealsPage() {
   return (
     <main>
-      <MealsList />
+      <DynamicMealsList />
     </main>
   );
 }
