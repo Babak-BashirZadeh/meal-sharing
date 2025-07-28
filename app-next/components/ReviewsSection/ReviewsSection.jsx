@@ -17,7 +17,7 @@ const ReviewsSection = ({ mealId }) => {
     const fetchReviews = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3001/api/reviews/${mealId}`
+          `https://meal-sharing-119o.onrender.com/api/reviews/${mealId}`
         );
         if (!response.ok) throw new Error("Failed to fetch reviews");
         const data = await response.json();
@@ -38,7 +38,7 @@ const ReviewsSection = ({ mealId }) => {
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3001/api/reviews", {
+      const response = await fetch("https://meal-sharing-119o.onrender.com/api/reviews", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
