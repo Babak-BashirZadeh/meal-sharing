@@ -13,7 +13,7 @@ function HomePage() {
   useEffect(() => {
     const fetchMeals = async () => {
       try {
-        const response = await fetch(api("/api/meals"));
+        const response = await fetch(api("/meals"));
         const data = await response.json();
         setMeals(data.slice(0, 3));
       } catch (error) {
