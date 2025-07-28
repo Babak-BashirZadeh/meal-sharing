@@ -13,7 +13,7 @@ function HomePage() {
   useEffect(() => {
     const fetchMeals = async () => {
       try {
-        const response = await fetch(api("/api/meals"));
+        const response = await fetch(api("/meals"));
         const data = await response.json();
         setMeals(data.slice(0, 3));
       } catch (error) {
@@ -40,7 +40,7 @@ function HomePage() {
       <section className={styles.featuredMeals}>
         <div className={styles.sectionHeader}>
           <h2>Featured Meals</h2>
-          <Link href="/api/meals" className={styles.seeAll}>
+          <Link href="/meals" className={styles.seeAll}>
             View All
           </Link>
         </div>
