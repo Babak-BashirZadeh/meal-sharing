@@ -40,7 +40,7 @@ function HomePage() {
       <section className={styles.featuredMeals}>
         <div className={styles.sectionHeader}>
           <h2>Featured Meals</h2>
-          <Link href="/api/meals" className={styles.seeAll}>
+          <Link href="/meals" className={styles.seeAll}>
             View All
           </Link>
         </div>
