@@ -18,7 +18,7 @@ const MealDetail = ({ mealId }) => {
       try {
         setIsLoading(true);
         const response = await fetch(
-          `http://localhost:3001/api/meals/${mealId}`
+          `https://meal-sharing-119o.onrender.com/api/meals/${mealId}`
         );
 
         if (!response.ok) {
