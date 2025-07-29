@@ -10,7 +10,7 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: "https://meal-sharing-119o.onrender.com",
+    origin: "https://meal-sharing-frontend-tdql.onrender.com",
     methods: ["GET", "POST"],
     credentials: true,
   })
